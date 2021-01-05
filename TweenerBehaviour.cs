@@ -1,20 +1,17 @@
 ﻿using System;
-using __Utils._ClassExtensions.LanguageExtensions;
-using __Utils._ClassExtensions.UnityExtensions;
-using __Utils.UnityUtils;
+using System.Collections;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using TweenType = __Utils.UnityUtils.TweenType;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
-namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
+namespace Plugins.DOTweenUtils {
 	public class TweenerBehaviour : MonoBehaviour {
 		[Header("Entry Settings")]
-		[FormerlySerializedAs("tweeningPreset")]
 		[SerializeField]
 		private TweeningPreset entryTweeningPreset;
 
@@ -47,7 +44,19 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 
 		public TweeningPreset ExitTweenPreset => exitTweenPreset;
 
+		private static MonoBehaviour CoroutineRunner {
+			get {
+				if (!_coroutineRunner) {
+					_coroutineRunner = new GameObject("TweenerBehaviourCoroutineRunner").GetComponent<MonoBehaviour>();
+				}
+
+				return _coroutineRunner;
+			}
+		}
+
 		public bool ExecuteOnDisable => executeOnDisable;
+
+		private static MonoBehaviour _coroutineRunner;
 
 		private void Awake() {
 			if (executeOnAwake) {
@@ -65,7 +74,9 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 			transform.DOKill(true);
 		}
 
+#if ODIN_INSPECTOR
 		[Button]
+#endif
 		public void Play() {
 			Play(null);
 		}
@@ -85,16 +96,13 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 
 		public void Disable() {
 			if (exitTweenPreset) {
-				PlayTweenPreset(exitTweenPreset);
-
-				CoroutineRunner.Instance.DoAfterSeconds(
+				PlayTweenPreset(
+					exitTweenPreset,
 					() => {
 						if (gameObject) {
 							gameObject.SetActive(false);
 						}
-					},
-					exitTweenPreset.Duration,
-					exitTweenPreset.UnscaledTime
+					}
 				);
 			}
 			else {
@@ -111,20 +119,7 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 				return;
 			}
 
-			CoroutineRunner.Instance.DoAfterSeconds(
-				() => {
-					if (preset.DisableOnFinish) {
-						gameObject.SetActive(false);
-					}
-					else if (preset.DestroyOnFinish) {
-						Destroy(gameObject);
-					}
-
-					callback?.Invoke();
-				},
-				preset.Duration,
-				preset.UnscaledTime
-			);
+			CoroutineRunner.StartCoroutine(DoAfterTweenCompletion(preset, callback));
 
 			foreach (TweenAction tweenAction in preset) {
 				switch (tweenAction.TweenType) {
@@ -139,21 +134,39 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 			}
 		}
 
+		private IEnumerator DoAfterTweenCompletion(TweeningPreset tweeningPreset, Action callback) {
+			if (tweeningPreset.UnscaledTime) {
+				yield return new WaitForSecondsRealtime(tweeningPreset.Duration);
+			}
+			else {
+				yield return new WaitForSeconds(tweeningPreset.Duration);
+			}
+
+			if (tweeningPreset.DisableOnFinish) {
+				gameObject.SetActive(false);
+			}
+			else if (tweeningPreset.DestroyOnFinish) {
+				Destroy(gameObject);
+			}
+
+			callback?.Invoke();
+		}
+
 		private void PlayTransformTween(TweenAction tweenAction) {
 			if (tweenAction.SetActiveAtStart) {
 				gameObject.SetActive(true);
 			}
 
-			switch (tweenAction.Action) {
-				case TransformAction.Position:
+			switch (tweenAction.Operation) {
+				case TransformOperation.Position:
 					PerformTranslation(tweenAction);
 					break;
 
-				case TransformAction.Rotation:
+				case TransformOperation.Rotation:
 					PerformRotation(tweenAction);
 					break;
 
-				case TransformAction.Scale:
+				case TransformOperation.Scale:
 					PerformScaling(tweenAction);
 					break;
 
@@ -166,7 +179,7 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 			Graphic[] graphics = GetComponentsInChildren<Graphic>();
 			SpriteRenderer[] spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
 
-			if (graphics.IsNullOrEmpty() && spriteRenderers.IsNullOrEmpty()) {
+			if (graphics == null || graphics.Length == 0 && spriteRenderers == null || spriteRenderers.Length == 0) {
 				return;
 			}
 
@@ -267,19 +280,19 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 
 			Vector3 currentPos;
 
-			switch (tweenAction.Action) {
-				case TransformAction.Position:
+			switch (tweenAction.Operation) {
+				case TransformOperation.Position:
 					currentPos = tweenAction.IncrementalTo
 						? transform.localPosition
 						: transform.position;
 
 					break;
 
-				case TransformAction.Rotation:
+				case TransformOperation.Rotation:
 					currentPos = transform.rotation.eulerAngles;
 					break;
 
-				case TransformAction.Scale:
+				case TransformOperation.Scale:
 					currentPos = transform.localScale;
 					break;
 

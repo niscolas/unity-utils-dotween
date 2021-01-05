@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using __Utils.UnityUtils;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 
-namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
+namespace Plugins.DOTweenUtils {
 	[CreateAssetMenu(menuName = nameof(TweeningPreset), order = -15)]
 	public class TweeningPreset : ScriptableObject {
 		[SerializeField]
@@ -13,7 +14,9 @@ namespace __Utils._Packages__PluginsUtils.DOTweenUtils {
 		[SerializeField]
 		private bool disableOnFinish;
 
+#if ODIN_INSPECTOR
 		[DisableIf(nameof(disableOnFinish))]
+#endif
 		[SerializeField]
 		private bool destroyOnFinish;
 
