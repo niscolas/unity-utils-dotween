@@ -1,4 +1,4 @@
-﻿namespace Plugins.DOTweenUtils {
+namespace Plugins.DOTweenUtils {
 	public enum TransformOperation {
 		Position,
 		Rotation,
