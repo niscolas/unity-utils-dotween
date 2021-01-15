@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using DG.Tweening;
+using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
 namespace Plugins.DOTweenUtils {
-	public abstract class TweenActionBase : ScriptableObject {
+	[EditorIcon("atom-icon-purple")]
+	public abstract class ScriptableTweenBase : AtomAction<GameObject> {
 		[SerializeField]
 		protected Ease easeType;
 
@@ -34,12 +36,18 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private BoolReference destroyOnFinish;
 
-		public async Task PlayTweenOn(GameObject target) {
+		protected abstract Task Inner_Do(GameObject target);
+
+		public override async void Do(GameObject target) {
+			await DoAsync(target);
+		}
+
+		public async Task DoAsync(GameObject target) {
 			if (enableOnStart) {
 				target.SetActive(true);
 			}
 
-			await Inner_PlayTweenOn(target);
+			await Inner_Do(target);
 
 			if (destroyOnFinish) {
 				Destroy(target);
@@ -48,8 +56,6 @@ namespace Plugins.DOTweenUtils {
 				target.SetActive(false);
 			}
 		}
-
-		protected abstract Task Inner_PlayTweenOn(GameObject target);
 
 		protected Tween ApplyDefaultOptions(Tween tween) {
 			return tween

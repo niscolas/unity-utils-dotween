@@ -1,11 +1,13 @@
 ﻿using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Plugins.DOTweenUtils {
 	public class TweenerBehaviour : MonoBehaviour {
+		[FormerlySerializedAs("entryScriptableTweenGroup")]
 		[Header("Entry Settings")]
 		[SerializeField]
-		private ScriptableTween entryScriptableTween;
+		private ScriptableTweenSequence entryScriptableTweenSequence;
 
 		[SerializeField]
 		private bool executeOnAwake;
@@ -30,7 +32,7 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		private async void PlayEntryTween() {
-			await entryScriptableTween.PlayTweenOn(gameObject);
+			await entryScriptableTweenSequence.DoAsync(gameObject);
 		}
 	}
 }

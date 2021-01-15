@@ -1,14 +1,20 @@
 ﻿using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
+using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+using static Plugins.DOTweenUtils.ScriptableTweenSequence;
 
 namespace Plugins.DOTweenUtils {
-	public class TransformTweenAction : TweenActionBase {
+	[EditorIcon("atom-icon-purple")]
+	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Transform Tween", order = AssetMenuOrder)]
+	public class ScriptableTransformTween : ScriptableTweenBase {
+		[Header("Transform")]
 		[SerializeField]
 		private TransformOperation operation;
 
+		[Header("Transform / From")]
 		[SerializeField]
 		private bool useCurrentX;
 
@@ -26,6 +32,14 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private Vector3Reference fromVector;
 
+		[ShowIf(EConditionOperator.Or,
+			nameof(useCurrentX),
+			nameof(useCurrentY),
+			nameof(useCurrentZ))]
+		[SerializeField]
+		private Vector3Reference offsetFromCurrent;
+
+		[Header("Transform / To")]
 		[SerializeField]
 		private bool incrementalTo;
 
@@ -42,7 +56,7 @@ namespace Plugins.DOTweenUtils {
 			set => toVector = value;
 		}
 
-		protected override async Task Inner_PlayTweenOn(GameObject target) {
+		protected override async Task Inner_Do(GameObject target) {
 			Tween transformTween = operation switch {
 				TransformOperation.Position => PerformTranslation(target),
 				TransformOperation.Rotation => PerformRotation(target),
@@ -56,7 +70,7 @@ namespace Plugins.DOTweenUtils {
 		private Tween PerformTranslation(GameObject target) {
 			target.transform.position = GetFromPosition(target);
 
-			Tween translationTween = target.transform.DOLocalMove(GetFinalTo(target), duration);
+			Tween translationTween = target.transform.DOMove(GetFinalTo(target), duration);
 
 			return ApplyDefaultOptions(translationTween);
 		}
@@ -96,9 +110,9 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		private Vector3 FilterFromVector(Vector3 currentFrom) {
-			float x = useCurrentX ? currentFrom.x : fromVector.Value.x;
-			float y = useCurrentY ? currentFrom.y : fromVector.Value.y;
-			float z = useCurrentZ ? currentFrom.z : fromVector.Value.z;
+			float x = useCurrentX ? currentFrom.x + offsetFromCurrent.Value.x : fromVector.Value.x;
+			float y = useCurrentY ? currentFrom.y + offsetFromCurrent.Value.y : fromVector.Value.y;
+			float z = useCurrentZ ? currentFrom.z + offsetFromCurrent.Value.z : fromVector.Value.z;
 
 			return new Vector3(x, y, z);
 		}
