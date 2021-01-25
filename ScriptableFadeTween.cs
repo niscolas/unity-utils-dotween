@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
+using Plugins.ClassExtensions.CsharpExtensions;
 using UnityAtoms;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,8 +12,11 @@ using static Plugins.DOTweenUtils.ScriptableTweenSequence;
 namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Fade Tween", order = AssetMenuOrder)]
-	public class ScriptableFadeTween : ScriptableTweenBase {
+	public class ScriptableFadeTween : BaseScriptableTween {
 		[Header("Fade Settings")]
+		[SerializeField]
+		private bool recursive = true;
+
 		[SerializeField]
 		private bool useCurrentAlpha;
 
@@ -22,7 +27,7 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private float fadeTo;
 
-		protected override async Task Inner_Do(GameObject target) {
+		protected override async UniTask Inner_DoAsync(GameObject target) {
 			List<Tween> tweens = new List<Tween>();
 			tweens.AddRange(GetGraphicsFadeTweens(target));
 			tweens.AddRange(GetRenderersFadeTweens(target));
@@ -30,7 +35,7 @@ namespace Plugins.DOTweenUtils {
 
 			List<Task> tweenTasks = new List<Task>();
 			foreach (Tween tween in tweens) {
-				ApplyDefaultOptions(tween);
+				ApplyDefaultOptions(tween, target);
 				tweenTasks.Add(tween.AsyncWaitForCompletion());
 			}
 
@@ -38,11 +43,18 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		private IEnumerable<Tween> GetGraphicsFadeTweens(GameObject target) {
-			Graphic[] graphics = target.GetComponentsInChildren<Graphic>();
+			Graphic[] graphics = GetComponentsFiltered<Graphic>(target);
 
 			List<Tween> graphicsTweens = new List<Tween>();
+			if (graphics.IsNullOrEmpty()) {
+				return graphicsTweens;
+			}
 
 			foreach (Graphic graphic in graphics) {
+				if (!graphic) {
+					continue;
+				}
+
 				Tween graphicTween =
 					graphic
 						.DOFade(fadeTo, duration)
@@ -55,11 +67,18 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		private IEnumerable<Tween> GetRenderersFadeTweens(GameObject target) {
-			Renderer[] renderers = target.GetComponentsInChildren<Renderer>();
+			Renderer[] renderers = GetComponentsFiltered<Renderer>(target);
 
 			List<Tween> renderersTweens = new List<Tween>();
+			if (renderers.IsNullOrEmpty()) {
+				return renderersTweens;
+			}
 
 			foreach (Renderer renderer in renderers) {
+				if (!renderer) {
+					continue;
+				}
+
 				Tween rendererTween =
 					renderer.material
 						.DOFade(fadeTo, duration)
@@ -72,11 +91,18 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		private IEnumerable<Tween> GetSpriteRenderersFadeTweens(GameObject target) {
-			SpriteRenderer[] spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>();
+			SpriteRenderer[] spriteRenderers = GetComponentsFiltered<SpriteRenderer>(target);
 
 			List<Tween> spriteRenderersTweens = new List<Tween>();
+			if (spriteRenderers.IsNullOrEmpty()) {
+				return spriteRenderersTweens;
+			}
 
 			foreach (SpriteRenderer spriteRenderer in spriteRenderers) {
+				if (!spriteRenderer) {
+					continue;
+				}
+
 				Tween rendererTween =
 					spriteRenderer
 						.DOFade(fadeTo, duration)
@@ -86,6 +112,15 @@ namespace Plugins.DOTweenUtils {
 			}
 
 			return spriteRenderersTweens;
+		}
+
+		private T[] GetComponentsFiltered<T>(GameObject target) where T : Component {
+			if (recursive) {
+				return target.GetComponentsInChildren<T>();
+			}
+
+			T component = target.GetComponent<T>();
+			return component ? new[] {component} : null;
 		}
 	}
 }

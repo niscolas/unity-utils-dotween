@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
 using UnityAtoms;
@@ -9,7 +10,7 @@ using static Plugins.DOTweenUtils.ScriptableTweenSequence;
 namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Transform Tween", order = AssetMenuOrder)]
-	public class ScriptableTransformTween : ScriptableTweenBase {
+	public class ScriptableTransformTween : BaseScriptableTween {
 		[Header("Transform")]
 		[SerializeField]
 		private TransformOperation operation;
@@ -46,17 +47,13 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private Vector3Reference toVector;
 
-		public Vector3Reference FromVector {
-			get => fromVector;
-			set => fromVector = value;
+		public ScriptableTransformTween WithDynamicTo(Vector3 to) {
+			ScriptableTransformTween dynamicToVectorTween = Instantiate(this);
+			dynamicToVectorTween.toVector.Value = to;
+			return dynamicToVectorTween;
 		}
 
-		public Vector3Reference ToVector {
-			get => toVector;
-			set => toVector = value;
-		}
-
-		protected override async Task Inner_Do(GameObject target) {
+		protected override async UniTask Inner_DoAsync(GameObject target) {
 			Tween transformTween = operation switch {
 				TransformOperation.Position => PerformTranslation(target),
 				TransformOperation.Rotation => PerformRotation(target),
@@ -67,78 +64,58 @@ namespace Plugins.DOTweenUtils {
 			await transformTween.AsyncWaitForCompletion();
 		}
 
+		protected override Tween ApplyDefaultOptions(Tween tween, GameObject target) {
+			return base.ApplyDefaultOptions(tween, target).SetRelative(incrementalTo);
+		}
+
 		private Tween PerformTranslation(GameObject target) {
 			target.transform.position = GetFromPosition(target);
 
-			Tween translationTween = target.transform.DOMove(GetFinalTo(target), duration);
+			Tween translationTween = target.transform.DOMove(toVector, duration);
 
-			return ApplyDefaultOptions(translationTween);
+			return ApplyDefaultOptions(translationTween, target);
 		}
 
 		private Tween PerformRotation(GameObject target) {
 			target.transform.rotation = Quaternion.Euler(GetFromRotation(target));
 
-			Tween rotationTween = target.transform.DORotate(GetFinalTo(target), duration);
+			Tween rotationTween = target.transform.DORotate(toVector, duration);
 
-			return ApplyDefaultOptions(rotationTween);
+			return ApplyDefaultOptions(rotationTween, target);
 		}
 
 		private Tween PerformScaling(GameObject target) {
 			target.transform.localScale = GetFromScale(target);
 
-			Tween scalingTween = target.transform.DOScale(GetFinalTo(target), duration);
+			Tween scalingTween = target.transform.DOScale(toVector, duration);
 
-			return ApplyDefaultOptions(scalingTween);
+			return ApplyDefaultOptions(scalingTween, target);
 		}
 
 		private Vector3 GetFromPosition(GameObject target) {
 			Vector3 currentPosition = target.transform.position;
 
-			return FilterFromVector(currentPosition);
+			return GetFromVector(currentPosition);
 		}
 
 		private Vector3 GetFromRotation(GameObject target) {
 			Quaternion currentRotation = target.transform.rotation;
 
-			return FilterFromVector(currentRotation.eulerAngles);
+			return GetFromVector(currentRotation.eulerAngles);
 		}
 
 		private Vector3 GetFromScale(GameObject target) {
 			Vector3 currentScale = target.transform.localScale;
 
-			return FilterFromVector(currentScale);
+			return GetFromVector(currentScale);
 		}
 
-		private Vector3 FilterFromVector(Vector3 currentFrom) {
+		private Vector3 GetFromVector(Vector3 currentFrom) {
 			float x = useCurrentX ? currentFrom.x + offsetFromCurrent.Value.x : fromVector.Value.x;
 			float y = useCurrentY ? currentFrom.y + offsetFromCurrent.Value.y : fromVector.Value.y;
 			float z = useCurrentZ ? currentFrom.z + offsetFromCurrent.Value.z : fromVector.Value.z;
 
 			return new Vector3(x, y, z);
-		}
-
-		private Vector3 GetFinalTo(GameObject target) {
-			if (!incrementalTo) {
-				return toVector;
-			}
-
-			Vector3 currentPos = target.transform.position;
-
-			switch (operation) {
-				case TransformOperation.Position:
-					currentPos = incrementalTo ? target.transform.localPosition : target.transform.position;
-					break;
-
-				case TransformOperation.Rotation:
-					currentPos = target.transform.rotation.eulerAngles;
-					break;
-
-				case TransformOperation.Scale:
-					currentPos = target.transform.localScale;
-					break;
-			}
-
-			return currentPos + toVector;
 		}
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityAtoms;
 using UnityEngine;
+using UniTask = Cysharp.Threading.Tasks.UniTask;
 
 namespace Plugins.DOTweenUtils {
 	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Tween Sequence", order = AssetMenuOrder)]
@@ -10,28 +12,30 @@ namespace Plugins.DOTweenUtils {
 		public const int AssetMenuOrder = -20;
 
 		[SerializeField]
-		private ScriptableTweenBase[] content;
+		private BaseScriptableTween[] content;
 
 		public override async void Do(GameObject target) {
 			await DoAsync(target);
 		}
 
-		public async Task DoAsync(GameObject target) {
+		public async UniTask DoAsync(GameObject target) {
 			if (!target) {
 				return;
 			}
 
-			Task[] tweenTasks = new Task[content.Length];
-
-			for (int i = 0; i < content.Length; i++) {
-				tweenTasks[i] = content[i].DoAsync(target);
+			List<UniTask> tweenTasks = new List<UniTask>();
+			
+			foreach (BaseScriptableTween scriptableTween in content) {
+				tweenTasks.Add(
+					scriptableTween.DoAsync(target)
+				);
 			}
 
-			await Task.WhenAll(tweenTasks);
+			await UniTask.WhenAll(tweenTasks);
 		}
 
-		public IEnumerator<ScriptableTweenBase> GetEnumerator() {
-			return ((IEnumerable<ScriptableTweenBase>) content).GetEnumerator();
+		public IEnumerator<BaseScriptableTween> GetEnumerator() {
+			return ((IEnumerable<BaseScriptableTween>) content).GetEnumerator();
 		}
 	}
 }
