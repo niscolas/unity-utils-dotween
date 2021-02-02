@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Lean.Pool;
+using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
@@ -9,36 +10,43 @@ using UnityEngine;
 namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
 	public abstract class BaseScriptableTween : AtomAction<GameObject> {
+		[Title("Tween")]
 		[SerializeField]
 		protected Ease easeType;
 
-		[Header("Time Settings")]
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected FloatReference duration;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected FloatReference delay;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected IntReference loops;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
-		protected BoolReference isPingPong;
+		protected LoopType loopType;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected BoolReference useUnscaledTime;
 
-		[Header("Other Settings")]
+		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
 		private BoolReference enableOnStart;
 
+		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
 		private BoolReference disableOnFinish;
 
+		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
 		private BoolReference destroyOnFinish;
 
-		protected abstract UniTask Inner_DoAsync(GameObject target);
+		public abstract IEnumerable<Tween> GetTweens(GameObject target);
 
 		public override async void Do(GameObject target) {
 			await DoAsync(target);
@@ -49,14 +57,20 @@ namespace Plugins.DOTweenUtils {
 				target.SetActive(true);
 			}
 
-			await Inner_DoAsync(target);
+			Sequence sequence = DOTween.Sequence();
+			IEnumerable<Tween> tweens = GetTweens(target);
+			foreach (Tween tween in tweens) {
+				sequence.Append(tween);
+			}
+
+			await sequence.AsyncWaitForCompletion();
 
 			if (destroyOnFinish) {
 				Destroy(target);
 			}
 			else if (disableOnFinish) {
 				if (LeanPool.Links.ContainsKey(target)) {
-					LeanPool.Despawn(target);	
+					LeanPool.Despawn(target);
 				}
 				else {
 					target.SetActive(false);
@@ -66,7 +80,7 @@ namespace Plugins.DOTweenUtils {
 
 		protected virtual Tween ApplyDefaultOptions(Tween tween, GameObject target) {
 			return tween
-				.SetLoops(loops, isPingPong ? LoopType.Yoyo : LoopType.Incremental)
+				.SetLoops(loops, loopType)
 				.SetDelay(delay)
 				.SetLink(target)
 				.SetEase(easeType)

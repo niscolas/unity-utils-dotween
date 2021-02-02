@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
-using NaughtyAttributes;
 using Plugins.ClassExtensions.CsharpExtensions;
+using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityEngine;
 using UnityEngine.UI;
-using static Plugins.DOTweenUtils.ScriptableTweenSequence;
 
 namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
-	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Fade Tween", order = AssetMenuOrder)]
+	[CreateAssetMenu(
+		menuName = ScriptableTweenSequence.BaseAssetMenuPath + "Scriptable Fade Tween",
+		order = ScriptableTweenSequence.AssetMenuOrder)]
 	public class ScriptableFadeTween : BaseScriptableTween {
 		[Header("Fade Settings")]
 		[SerializeField]
@@ -27,100 +27,82 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private float fadeTo;
 
-		protected override async UniTask Inner_DoAsync(GameObject target) {
-			List<Tween> tweens = new List<Tween>();
-			tweens.AddRange(GetGraphicsFadeTweens(target));
-			tweens.AddRange(GetRenderersFadeTweens(target));
-			tweens.AddRange(GetSpriteRenderersFadeTweens(target));
+		[Header("Fade Settings / Targets")]
+		[SerializeField]
+		private bool affectGraphics = true;
 
-			List<Task> tweenTasks = new List<Task>();
+		[SerializeField]
+		private bool affectRenderers = true;
+
+		[SerializeField]
+		private bool affectSpriteRenderers = true;
+
+		public override IEnumerable<Tween> GetTweens(GameObject target) {
+			List<Tween> tweens = new List<Tween>();
+			if (affectGraphics) {
+				tweens.AddRange(GetTweens<Graphic>(target, GetGraphicsFadeTweens));
+			}
+
+			if (affectRenderers) {
+				tweens.AddRange(GetTweens<Renderer>(target, GetRenderersFadeTweens));
+			}
+
+			if (affectSpriteRenderers) {
+				tweens.AddRange(GetTweens<SpriteRenderer>(target, GetSpriteRenderersFadeTweens));
+			}
+
 			foreach (Tween tween in tweens) {
 				ApplyDefaultOptions(tween, target);
-				tweenTasks.Add(tween.AsyncWaitForCompletion());
 			}
 
-			await Task.WhenAll(tweenTasks);
+			return tweens;
 		}
 
-		private IEnumerable<Tween> GetGraphicsFadeTweens(GameObject target) {
-			Graphic[] graphics = GetComponentsFiltered<Graphic>(target);
+		private IEnumerable<Tween> GetTweens<T>(GameObject target, Func<T, Tween> tweenFunc) {
+			List<Tween> tweens = new List<Tween>();
+			if (!recursive) {
+				T component = target.GetComponent<T>();
+				if (component != null) {
+					tweens.Add(tweenFunc?.Invoke(component));
+				}
 
-			List<Tween> graphicsTweens = new List<Tween>();
-			if (graphics.IsNullOrEmpty()) {
-				return graphicsTweens;
+				return tweens;
 			}
 
-			foreach (Graphic graphic in graphics) {
-				if (!graphic) {
+			T[] components = target.GetComponentsInChildren<T>(target);
+
+			if (components.IsNullOrEmpty()) {
+				return tweens;
+			}
+
+			foreach (T component in components) {
+				if (component == null) {
 					continue;
 				}
 
-				Tween graphicTween =
-					graphic
-						.DOFade(fadeTo, duration)
-						.From(useCurrentAlpha ? graphic.color.a : fadeFrom);
-
-				graphicsTweens.Add(graphicTween);
+				Tween tween = tweenFunc?.Invoke(component);
+				tweens.Add(tween);
 			}
 
-			return graphicsTweens;
+			return tweens;
 		}
 
-		private IEnumerable<Tween> GetRenderersFadeTweens(GameObject target) {
-			Renderer[] renderers = GetComponentsFiltered<Renderer>(target);
-
-			List<Tween> renderersTweens = new List<Tween>();
-			if (renderers.IsNullOrEmpty()) {
-				return renderersTweens;
-			}
-
-			foreach (Renderer renderer in renderers) {
-				if (!renderer) {
-					continue;
-				}
-
-				Tween rendererTween =
-					renderer.material
-						.DOFade(fadeTo, duration)
-						.From(useCurrentAlpha ? renderer.material.color.a : fadeFrom);
-
-				renderersTweens.Add(rendererTween);
-			}
-
-			return renderersTweens;
+		private Tween GetGraphicsFadeTweens(Graphic graphic) {
+			return graphic
+				.DOFade(fadeTo, duration)
+				.From(useCurrentAlpha ? graphic.color.a : fadeFrom);
 		}
 
-		private IEnumerable<Tween> GetSpriteRenderersFadeTweens(GameObject target) {
-			SpriteRenderer[] spriteRenderers = GetComponentsFiltered<SpriteRenderer>(target);
-
-			List<Tween> spriteRenderersTweens = new List<Tween>();
-			if (spriteRenderers.IsNullOrEmpty()) {
-				return spriteRenderersTweens;
-			}
-
-			foreach (SpriteRenderer spriteRenderer in spriteRenderers) {
-				if (!spriteRenderer) {
-					continue;
-				}
-
-				Tween rendererTween =
-					spriteRenderer
-						.DOFade(fadeTo, duration)
-						.From(useCurrentAlpha ? spriteRenderer.color.a : fadeFrom);
-
-				spriteRenderersTweens.Add(rendererTween);
-			}
-
-			return spriteRenderersTweens;
+		private Tween GetRenderersFadeTweens(Renderer renderer) {
+			return renderer.material
+				.DOFade(fadeTo, duration)
+				.From(useCurrentAlpha ? renderer.material.color.a : fadeFrom);
 		}
 
-		private T[] GetComponentsFiltered<T>(GameObject target) where T : Component {
-			if (recursive) {
-				return target.GetComponentsInChildren<T>();
-			}
-
-			T component = target.GetComponent<T>();
-			return component ? new[] {component} : null;
+		private Tween GetSpriteRenderersFadeTweens(SpriteRenderer spriteRenderer) {
+			return spriteRenderer
+				.DOFade(fadeTo, duration)
+				.From(useCurrentAlpha ? spriteRenderer.color.a : fadeFrom);
 		}
 	}
 }

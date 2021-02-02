@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DG.Tweening;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
@@ -11,41 +10,53 @@ namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Transform Tween", order = AssetMenuOrder)]
 	public class ScriptableTransformTween : BaseScriptableTween {
-		[Header("Transform")]
+		[Title("Transform Tween")]
 		[SerializeField]
 		private TransformOperation operation;
 
-		[Header("Transform / From")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[HorizontalGroup("From To/From/Current From/XYZ", LabelWidth = 10)]
+		[VerticalGroup("From To/From/Current From/XYZ/X")]
+		[LabelText("X")]
 		[SerializeField]
 		private bool useCurrentX;
 
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[VerticalGroup("From To/From/Current From/XYZ/Y")]
+		[LabelText("Y")]
 		[SerializeField]
 		private bool useCurrentY;
 
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[VerticalGroup("From To/From/Current From/XYZ/Z")]
+		[LabelText("Z")]
 		[SerializeField]
 		private bool useCurrentZ;
 
-		[HideIf(
-			EConditionOperator.And,
-			nameof(useCurrentX),
-			nameof(useCurrentY),
-			nameof(useCurrentZ))]
-		[SerializeField]
-		private Vector3Reference fromVector;
-
-		[ShowIf(EConditionOperator.Or,
-			nameof(useCurrentX),
-			nameof(useCurrentY),
-			nameof(useCurrentZ))]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[LabelText("With Offset")]
+		[ShowIf(nameof(UseCurrentXYZ))]
+		[Title("Offset From Current")]
+		[HideLabel]
 		[SerializeField]
 		private Vector3Reference offsetFromCurrent;
 
-		[Header("Transform / To")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Fixed From")]
+		[DisableIf(nameof(UseCurrentXYZ))]
+		[HideLabel]
+		[SerializeField]
+		private Vector3Reference fromVector;
+
+		[TabGroup("From To", "To")]
 		[SerializeField]
 		private bool incrementalTo;
 
+		[TabGroup("From To", "To")]
 		[SerializeField]
 		private Vector3Reference toVector;
+
+		private bool UseCurrentXYZ => useCurrentX && useCurrentY && useCurrentZ;
 
 		public ScriptableTransformTween WithDynamicTo(Vector3 to) {
 			ScriptableTransformTween dynamicToVectorTween = Instantiate(this);
@@ -53,7 +64,7 @@ namespace Plugins.DOTweenUtils {
 			return dynamicToVectorTween;
 		}
 
-		protected override async UniTask Inner_DoAsync(GameObject target) {
+		public override IEnumerable<Tween> GetTweens(GameObject target) {
 			Tween transformTween = operation switch {
 				TransformOperation.Position => PerformTranslation(target),
 				TransformOperation.Rotation => PerformRotation(target),
@@ -61,7 +72,7 @@ namespace Plugins.DOTweenUtils {
 				_ => PerformTranslation(target)
 			};
 
-			await transformTween.AsyncWaitForCompletion();
+			return new[] {transformTween};
 		}
 
 		protected override Tween ApplyDefaultOptions(Tween tween, GameObject target) {
