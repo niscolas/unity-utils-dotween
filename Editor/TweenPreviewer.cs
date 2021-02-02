@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if ODIN_INSPECTOR
+using System.Collections.Generic;
 using DG.DOTweenEditor;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -41,3 +42,4 @@ namespace Plugins.DOTweenUtils.Editor {
 		}
 	}
 }
+#endif
