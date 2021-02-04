@@ -57,10 +57,13 @@ namespace Plugins.DOTweenUtils {
 				target.SetActive(true);
 			}
 
+			Sequence sequence = DOTween.Sequence();
 			IEnumerable<Tween> tweens = GetTweens(target);
-			IEnumerable<UniTask> tweenTasks = tweens.Select(tween => tween.AsyncWaitForCompletion().AsUniTask());
+			foreach (Tween tween in tweens) {
+				sequence.Append(tween);
+			}
 
-			await UniTask.WhenAll(tweenTasks);
+			await sequence.AsyncWaitForCompletion();
 
 			if (destroyOnFinish) {
 				Destroy(target);
