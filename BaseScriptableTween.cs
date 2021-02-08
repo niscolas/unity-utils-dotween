@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Plugins.DOTweenUtils {
 	[EditorIcon("atom-icon-purple")]
@@ -36,15 +37,26 @@ namespace Plugins.DOTweenUtils {
 
 		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
-		private BoolReference enableOnStart;
+		private LinkBehaviour linkBehaviour = LinkBehaviour.CompleteAndKillOnDisable;
 
 		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
-		private BoolReference disableOnFinish;
+		private bool autoKill = true;
+		
+		[TabGroup("Main Settings", "Life Time")]
+		[FormerlySerializedAs("enableOnStart")]
+		[SerializeField]
+		private BoolReference enableTargetOnStart;
 
 		[TabGroup("Main Settings", "Life Time")]
+		[FormerlySerializedAs("disableOnFinish")]
 		[SerializeField]
-		private BoolReference destroyOnFinish;
+		private BoolReference disableTargetOnFinish;
+
+		[TabGroup("Main Settings", "Life Time")]
+		[FormerlySerializedAs("destroyOnFinish")]
+		[SerializeField]
+		private BoolReference destroyTargetOnFinish;
 
 		public abstract IEnumerable<Tween> GetTweens(GameObject target);
 
@@ -53,7 +65,7 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		public async UniTask DoAsync(GameObject target) {
-			if (enableOnStart) {
+			if (enableTargetOnStart) {
 				target.SetActive(true);
 			}
 
@@ -62,10 +74,10 @@ namespace Plugins.DOTweenUtils {
 
 			await UniTask.WhenAll(tweenTasks);
 
-			if (destroyOnFinish) {
+			if (destroyTargetOnFinish) {
 				Destroy(target);
 			}
-			else if (disableOnFinish) {
+			else if (disableTargetOnFinish) {
 				if (LeanPool.Links.ContainsKey(target)) {
 					LeanPool.Despawn(target);
 				}
@@ -78,8 +90,9 @@ namespace Plugins.DOTweenUtils {
 		protected virtual Tween ApplyDefaultOptions(Tween tween, GameObject target) {
 			return tween
 				.SetLoops(loops, loopType)
+				.SetAutoKill(autoKill)
 				.SetDelay(delay)
-				.SetLink(target)
+				.SetLink(target, linkBehaviour)
 				.SetEase(easeType)
 				.SetUpdate(useUnscaledTime);
 		}

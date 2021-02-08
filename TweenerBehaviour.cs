@@ -27,10 +27,6 @@ namespace Plugins.DOTweenUtils {
 			}
 		}
 
-		private void OnDisable() {
-			transform.DOKill(true);
-		}
-
 		private async void PlayEntryTween() {
 			await entryScriptableTweenSequence.DoAsync(gameObject);
 		}
