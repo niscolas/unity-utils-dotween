@@ -65,12 +65,24 @@ namespace Plugins.DOTweenUtils {
 		}
 
 		public override IEnumerable<Tween> GetTweens(GameObject target) {
-			Tween transformTween = operation switch {
-				TransformOperation.Position => PerformTranslation(target),
-				TransformOperation.Rotation => PerformRotation(target),
-				TransformOperation.Scale => PerformScaling(target),
-				_ => PerformTranslation(target)
-			};
+			Tween transformTween;
+			switch (operation) {
+				case TransformOperation.Position:
+					transformTween = PerformTranslation(target);
+					break;
+				
+				case TransformOperation.Rotation:
+					transformTween = PerformRotation(target);
+					break;
+				
+				case TransformOperation.Scale:
+					transformTween = PerformScaling(target);
+					break;
+				
+				default:
+					transformTween = PerformTranslation(target);
+					break;
+			}
 
 			return new[] {transformTween};
 		}

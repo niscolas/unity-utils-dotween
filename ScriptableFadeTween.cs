@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
-using Plugins.ClassExtensions.CsharpExtensions;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityEngine;
@@ -71,7 +70,7 @@ namespace Plugins.DOTweenUtils {
 
 			T[] components = target.GetComponentsInChildren<T>(target);
 
-			if (components.IsNullOrEmpty()) {
+			if (components == null || components.Length == 0) {
 				return tweens;
 			}
 
