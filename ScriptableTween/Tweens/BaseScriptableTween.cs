@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Plugins.ClassExtensions.CsharpExtensions;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 	[EditorIcon("atom-icon-purple")]
 	public abstract class BaseScriptableTween<T> : AtomAction<T> {
 		[Title("Tween")]
 		[SerializeField]
-		protected Ease easeType;
+		protected Ease[] possibleEaseTypes;
 
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
@@ -21,11 +22,25 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 		
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
-		protected FloatReference duration;
+		private FloatReference duration;
+
+		[SerializeField]
+		private bool randomizeDuration;
+		
+		[Range(0,1)]
+		[SerializeField]
+		private float durationRandomization;
 
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
-		protected FloatReference delay;
+		private FloatReference delay;
+		
+		[SerializeField]
+		private bool randomizeDelay;
+		
+		[Range(0,1)]
+		[SerializeField]
+		private float delayRandomization;
 
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
@@ -46,6 +61,12 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 		[TabGroup("From To", "To")]
 		[SerializeField]
 		private bool isRelative;
+
+		private Ease CurrentEaseType => possibleEaseTypes.RandomElement();
+
+		protected float CurrentDuration => GetNewValueFor(duration.Value, durationRandomization, randomizeDuration);
+		protected  float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
+
 
 		protected abstract IEnumerable<Tween> GetTweens(T target);
 
@@ -77,10 +98,18 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 			return tween
 				.SetLoops(loops, loopType)
 				.SetAutoKill(autoKill)
-				.SetDelay(delay)
-				.SetEase(easeType)
+				.SetDelay(CurrentDelay)
+				.SetEase(possibleEaseTypes.RandomElement())
 				.SetUpdate(useUnscaledTime)
 				.SetRelative(isRelative);
+		}
+
+		private float GetNewValueFor(float value, float randomization, bool randomize) {	
+			if (randomize) {
+				return value.Randomize(randomization);
+			}
+
+			return value;
 		}
 	}
 }

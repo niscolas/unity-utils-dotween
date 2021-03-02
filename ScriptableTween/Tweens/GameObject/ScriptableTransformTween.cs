@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
+using Plugins.ClassExtensions.CsharpExtensions;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
@@ -8,7 +9,7 @@ using UnityEngine;
 namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
-		menuName = Constants.BaseAssetMenuPath + "Scriptable Transform Tween", 
+		menuName = Constants.BaseAssetMenuPath + "Scriptable Transform Tween",
 		order = Constants.AssetMenuOrder)]
 	public class ScriptableTransformTween : GameObjectScriptableTween {
 		[Title("Transform Tween")]
@@ -53,6 +54,28 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		[SerializeField]
 		private Vector3Reference toVector;
 
+		[SerializeField]
+		private bool randomizeTo;
+
+		[SerializeField]
+		private Vector3 toVectorRandomization;
+
+		private Vector3 CurrentToVector {
+			get {
+				Vector3 toVectorValue = toVector.Value;
+
+				if (!randomizeTo) {
+					return toVectorValue;
+				}
+
+				float x = toVectorValue.x.Randomize(toVectorRandomization.x);
+				float y = toVectorValue.y.Randomize(toVectorRandomization.y);
+				float z = toVectorValue.z.Randomize(toVectorRandomization.z);
+
+				return new Vector3(x, y, z);
+			}
+		}
+
 		private bool UseCurrentXYZ => useCurrentX && useCurrentY && useCurrentZ;
 
 		public ScriptableTransformTween WithDynamicTo(Vector3 to) {
@@ -67,15 +90,15 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 				case TransformOperation.Position:
 					transformTween = PerformTranslation(target);
 					break;
-				
+
 				case TransformOperation.Rotation:
 					transformTween = PerformRotation(target);
 					break;
-				
+
 				case TransformOperation.Scale:
 					transformTween = PerformScaling(target);
 					break;
-				
+
 				default:
 					transformTween = PerformTranslation(target);
 					break;
@@ -87,7 +110,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		private Tween PerformTranslation(UnityEngine.GameObject target) {
 			target.transform.position = GetFromPosition(target);
 
-			Tween translationTween = target.transform.DOMove(toVector, duration);
+			Tween translationTween = target.transform.DOMove(CurrentToVector, CurrentDuration);
 
 			return translationTween;
 		}
@@ -95,7 +118,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		private Tween PerformRotation(UnityEngine.GameObject target) {
 			target.transform.rotation = Quaternion.Euler(GetFromRotation(target));
 
-			Tween rotationTween = target.transform.DORotate(toVector, duration);
+			Tween rotationTween = target.transform.DORotate(CurrentToVector, CurrentDuration);
 
 			return rotationTween;
 		}
@@ -103,7 +126,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		private Tween PerformScaling(UnityEngine.GameObject target) {
 			target.transform.localScale = GetFromScale(target);
 
-			Tween scalingTween = target.transform.DOScale(toVector, duration);
+			Tween scalingTween = target.transform.DOScale(CurrentToVector, CurrentDuration);
 
 			return scalingTween;
 		}

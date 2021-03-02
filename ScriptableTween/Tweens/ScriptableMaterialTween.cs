@@ -35,11 +35,11 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 			
 			switch (tweenType) {
 				case MaterialTweenType.DOFloat:
-					tween = target.DOFloat(endFloatValue, propertyName, duration);
+					tween = target.DOFloat(endFloatValue, propertyName, CurrentDuration);
 					break;
 
 				case MaterialTweenType.DOColor:
-					tween = target.DOColor(endColorValue, propertyName, duration);
+					tween = target.DOColor(endColorValue, propertyName, CurrentDuration);
 					break;
 			}
 

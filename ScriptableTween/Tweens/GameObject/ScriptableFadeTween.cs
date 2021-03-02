@@ -84,19 +84,19 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 
 		private Tween GetGraphicsFadeTweens(Graphic graphic) {
 			return graphic
-				.DOFade(fadeTo, duration)
+				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? graphic.color.a : fadeFrom);
 		}
 
 		private Tween GetRenderersFadeTweens(Renderer renderer) {
 			return renderer.material
-				.DOFade(fadeTo, duration)
+				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? renderer.material.color.a : fadeFrom);
 		}
 
 		private Tween GetSpriteRenderersFadeTweens(SpriteRenderer spriteRenderer) {
 			return spriteRenderer
-				.DOFade(fadeTo, duration)
+				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? spriteRenderer.color.a : fadeFrom);
 		}
 	}
