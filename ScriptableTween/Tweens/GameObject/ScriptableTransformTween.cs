@@ -4,12 +4,13 @@ using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
-using static Plugins.DOTweenUtils.ScriptableTweenSequence;
 
-namespace Plugins.DOTweenUtils {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 	[EditorIcon("atom-icon-purple")]
-	[CreateAssetMenu(menuName = BaseAssetMenuPath + "Scriptable Transform Tween", order = AssetMenuOrder)]
-	public class ScriptableTransformTween : BaseScriptableTween {
+	[CreateAssetMenu(
+		menuName = Constants.BaseAssetMenuPath + "Scriptable Transform Tween", 
+		order = Constants.AssetMenuOrder)]
+	public class ScriptableTransformTween : GameObjectScriptableTween {
 		[Title("Transform Tween")]
 		[SerializeField]
 		private TransformOperation operation;
@@ -50,10 +51,6 @@ namespace Plugins.DOTweenUtils {
 
 		[TabGroup("From To", "To")]
 		[SerializeField]
-		private bool incrementalTo;
-
-		[TabGroup("From To", "To")]
-		[SerializeField]
 		private Vector3Reference toVector;
 
 		private bool UseCurrentXYZ => useCurrentX && useCurrentY && useCurrentZ;
@@ -64,7 +61,7 @@ namespace Plugins.DOTweenUtils {
 			return dynamicToVectorTween;
 		}
 
-		public override IEnumerable<Tween> GetTweens(GameObject target) {
+		protected override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target) {
 			Tween transformTween;
 			switch (operation) {
 				case TransformOperation.Position:
@@ -87,47 +84,43 @@ namespace Plugins.DOTweenUtils {
 			return new[] {transformTween};
 		}
 
-		protected override Tween ApplyDefaultOptions(Tween tween, GameObject target) {
-			return base.ApplyDefaultOptions(tween, target).SetRelative(incrementalTo);
-		}
-
-		private Tween PerformTranslation(GameObject target) {
+		private Tween PerformTranslation(UnityEngine.GameObject target) {
 			target.transform.position = GetFromPosition(target);
 
 			Tween translationTween = target.transform.DOMove(toVector, duration);
 
-			return ApplyDefaultOptions(translationTween, target);
+			return translationTween;
 		}
 
-		private Tween PerformRotation(GameObject target) {
+		private Tween PerformRotation(UnityEngine.GameObject target) {
 			target.transform.rotation = Quaternion.Euler(GetFromRotation(target));
 
 			Tween rotationTween = target.transform.DORotate(toVector, duration);
 
-			return ApplyDefaultOptions(rotationTween, target);
+			return rotationTween;
 		}
 
-		private Tween PerformScaling(GameObject target) {
+		private Tween PerformScaling(UnityEngine.GameObject target) {
 			target.transform.localScale = GetFromScale(target);
 
 			Tween scalingTween = target.transform.DOScale(toVector, duration);
 
-			return ApplyDefaultOptions(scalingTween, target);
+			return scalingTween;
 		}
 
-		private Vector3 GetFromPosition(GameObject target) {
+		private Vector3 GetFromPosition(UnityEngine.GameObject target) {
 			Vector3 currentPosition = target.transform.position;
 
 			return GetFromVector(currentPosition);
 		}
 
-		private Vector3 GetFromRotation(GameObject target) {
+		private Vector3 GetFromRotation(UnityEngine.GameObject target) {
 			Quaternion currentRotation = target.transform.rotation;
 
 			return GetFromVector(currentRotation.eulerAngles);
 		}
 
-		private Vector3 GetFromScale(GameObject target) {
+		private Vector3 GetFromScale(UnityEngine.GameObject target) {
 			Vector3 currentScale = target.transform.localScale;
 
 			return GetFromVector(currentScale);

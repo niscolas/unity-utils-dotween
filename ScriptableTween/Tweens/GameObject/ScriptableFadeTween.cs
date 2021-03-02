@@ -6,12 +6,12 @@ using UnityAtoms;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Plugins.DOTweenUtils {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
-		menuName = ScriptableTweenSequence.BaseAssetMenuPath + "Scriptable Fade Tween",
-		order = ScriptableTweenSequence.AssetMenuOrder)]
-	public class ScriptableFadeTween : BaseScriptableTween {
+		menuName = Constants.BaseAssetMenuPath + "Scriptable Fade Tween",
+		order = Constants.AssetMenuOrder)]
+	public class ScriptableFadeTween : GameObjectScriptableTween {
 		[Header("Fade Settings")]
 		[SerializeField]
 		private bool recursive = true;
@@ -36,7 +36,7 @@ namespace Plugins.DOTweenUtils {
 		[SerializeField]
 		private bool affectSpriteRenderers = true;
 
-		public override IEnumerable<Tween> GetTweens(GameObject target) {
+		protected override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target) {
 			List<Tween> tweens = new List<Tween>();
 			if (affectGraphics) {
 				tweens.AddRange(GetTweens<Graphic>(target, GetGraphicsFadeTweens));
@@ -50,14 +50,10 @@ namespace Plugins.DOTweenUtils {
 				tweens.AddRange(GetTweens<SpriteRenderer>(target, GetSpriteRenderersFadeTweens));
 			}
 
-			foreach (Tween tween in tweens) {
-				ApplyDefaultOptions(tween, target);
-			}
-
 			return tweens;
 		}
 
-		private IEnumerable<Tween> GetTweens<T>(GameObject target, Func<T, Tween> tweenFunc) {
+		private IEnumerable<Tween> GetTweens<T>(UnityEngine.GameObject target, Func<T, Tween> tweenFunc) {
 			List<Tween> tweens = new List<Tween>();
 			if (!recursive) {
 				T component = target.GetComponent<T>();
