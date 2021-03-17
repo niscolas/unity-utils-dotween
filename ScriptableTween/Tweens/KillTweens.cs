@@ -2,17 +2,21 @@
 using UnityAtoms;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
+{
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "Destroy Tween",
 		order = Constants.AssetMenuOrder)]
-	public class KillTweens : AtomAction<UnityEngine.GameObject> {
+	public class KillTweens : AtomAction<UnityEngine.GameObject>
+	{
 		[SerializeField]
 		private bool complete = true;
 
-		public override void Do(UnityEngine.GameObject target) {
-			if (!target) {
+		public override void Do(UnityEngine.GameObject target)
+		{
+			if (!target)
+			{
 				return;
 			}
 

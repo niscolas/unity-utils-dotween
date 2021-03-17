@@ -6,12 +6,14 @@ using UnityAtoms;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
+{
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "Scriptable Fade Tween",
 		order = Constants.AssetMenuOrder)]
-	public class ScriptableFadeTween : GameObjectScriptableTween {
+	public class FadeTween : ScriptableGameObjectTween
+	{
 		[Header("Fade Settings")]
 		[SerializeField]
 		private bool recursive = true;
@@ -36,28 +38,35 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		[SerializeField]
 		private bool affectSpriteRenderers = true;
 
-		protected override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target) {
+		public override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target)
+		{
 			List<Tween> tweens = new List<Tween>();
-			if (affectGraphics) {
+			if (affectGraphics)
+			{
 				tweens.AddRange(GetTweens<Graphic>(target, GetGraphicsFadeTweens));
 			}
 
-			if (affectRenderers) {
+			if (affectRenderers)
+			{
 				tweens.AddRange(GetTweens<Renderer>(target, GetRenderersFadeTweens));
 			}
 
-			if (affectSpriteRenderers) {
+			if (affectSpriteRenderers)
+			{
 				tweens.AddRange(GetTweens<SpriteRenderer>(target, GetSpriteRenderersFadeTweens));
 			}
 
 			return tweens;
 		}
 
-		private IEnumerable<Tween> GetTweens<T>(UnityEngine.GameObject target, Func<T, Tween> tweenFunc) {
+		private IEnumerable<Tween> GetTweens<T>(UnityEngine.GameObject target, Func<T, Tween> tweenFunc)
+		{
 			List<Tween> tweens = new List<Tween>();
-			if (!recursive) {
+			if (!recursive)
+			{
 				T component = target.GetComponent<T>();
-				if (component != null) {
+				if (component != null)
+				{
 					tweens.Add(tweenFunc?.Invoke(component));
 				}
 
@@ -66,12 +75,15 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 
 			T[] components = target.GetComponentsInChildren<T>(target);
 
-			if (components == null || components.Length == 0) {
+			if (components == null || components.Length == 0)
+			{
 				return tweens;
 			}
 
-			foreach (T component in components) {
-				if (component == null) {
+			foreach (T component in components)
+			{
+				if (component == null)
+				{
 					continue;
 				}
 
@@ -82,19 +94,22 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 			return tweens;
 		}
 
-		private Tween GetGraphicsFadeTweens(Graphic graphic) {
+		private Tween GetGraphicsFadeTweens(Graphic graphic)
+		{
 			return graphic
 				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? graphic.color.a : fadeFrom);
 		}
 
-		private Tween GetRenderersFadeTweens(Renderer renderer) {
+		private Tween GetRenderersFadeTweens(Renderer renderer)
+		{
 			return renderer.material
 				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? renderer.material.color.a : fadeFrom);
 		}
 
-		private Tween GetSpriteRenderersFadeTweens(SpriteRenderer spriteRenderer) {
+		private Tween GetSpriteRenderersFadeTweens(SpriteRenderer spriteRenderer)
+		{
 			return spriteRenderer
 				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? spriteRenderer.color.a : fadeFrom);

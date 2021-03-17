@@ -6,36 +6,42 @@ using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
+{
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "Scriptable Transform Tween",
 		order = Constants.AssetMenuOrder)]
-	public class ScriptableTransformTween : GameObjectScriptableTween {
+	public class TransformTween : ScriptableGameObjectTween
+	{
 		[Title("Transform Tween")]
 		[SerializeField]
 		private TransformOperation operation;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[HorizontalGroup("From To/From/Current From/XYZ", LabelWidth = 10)]
 		[VerticalGroup("From To/From/Current From/XYZ/X")]
 		[LabelText("X")]
 		[SerializeField]
 		private bool useCurrentX;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Y")]
 		[LabelText("Y")]
 		[SerializeField]
 		private bool useCurrentY;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Z")]
 		[LabelText("Z")]
 		[SerializeField]
 		private bool useCurrentZ;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[LabelText("With Offset")]
 		[ShowIf(nameof(UseCurrentXYZ))]
 		[Title("Offset From Current")]
@@ -60,11 +66,14 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		[SerializeField]
 		private Vector3 toVectorRandomization;
 
-		private Vector3 CurrentToVector {
-			get {
+		private Vector3 CurrentToVector
+		{
+			get
+			{
 				Vector3 toVectorValue = toVector.Value;
 
-				if (!randomizeTo) {
+				if (!randomizeTo)
+				{
 					return toVectorValue;
 				}
 
@@ -78,15 +87,18 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 
 		private bool UseCurrentXYZ => useCurrentX && useCurrentY && useCurrentZ;
 
-		public ScriptableTransformTween WithDynamicTo(Vector3 to) {
-			ScriptableTransformTween dynamicToVectorTween = Instantiate(this);
+		public TransformTween WithDynamicTo(Vector3 to)
+		{
+			TransformTween dynamicToVectorTween = Instantiate(this);
 			dynamicToVectorTween.toVector.Value = to;
 			return dynamicToVectorTween;
 		}
 
-		protected override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target) {
+		public override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target)
+		{
 			Tween transformTween;
-			switch (operation) {
+			switch (operation)
+			{
 				case TransformOperation.Position:
 					transformTween = PerformTranslation(target);
 					break;
@@ -107,7 +119,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 			return new[] {transformTween};
 		}
 
-		private Tween PerformTranslation(UnityEngine.GameObject target) {
+		private Tween PerformTranslation(UnityEngine.GameObject target)
+		{
 			target.transform.position = GetFromPosition(target);
 
 			Tween translationTween = target.transform.DOMove(CurrentToVector, CurrentDuration);
@@ -115,7 +128,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 			return translationTween;
 		}
 
-		private Tween PerformRotation(UnityEngine.GameObject target) {
+		private Tween PerformRotation(UnityEngine.GameObject target)
+		{
 			target.transform.rotation = Quaternion.Euler(GetFromRotation(target));
 
 			Tween rotationTween = target.transform.DORotate(CurrentToVector, CurrentDuration);
@@ -123,7 +137,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 			return rotationTween;
 		}
 
-		private Tween PerformScaling(UnityEngine.GameObject target) {
+		private Tween PerformScaling(UnityEngine.GameObject target)
+		{
 			target.transform.localScale = GetFromScale(target);
 
 			Tween scalingTween = target.transform.DOScale(CurrentToVector, CurrentDuration);
@@ -131,25 +146,29 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 			return scalingTween;
 		}
 
-		private Vector3 GetFromPosition(UnityEngine.GameObject target) {
+		private Vector3 GetFromPosition(UnityEngine.GameObject target)
+		{
 			Vector3 currentPosition = target.transform.position;
 
 			return GetFromVector(currentPosition);
 		}
 
-		private Vector3 GetFromRotation(UnityEngine.GameObject target) {
+		private Vector3 GetFromRotation(UnityEngine.GameObject target)
+		{
 			Quaternion currentRotation = target.transform.rotation;
 
 			return GetFromVector(currentRotation.eulerAngles);
 		}
 
-		private Vector3 GetFromScale(UnityEngine.GameObject target) {
+		private Vector3 GetFromScale(UnityEngine.GameObject target)
+		{
 			Vector3 currentScale = target.transform.localScale;
 
 			return GetFromVector(currentScale);
 		}
 
-		private Vector3 GetFromVector(Vector3 currentFrom) {
+		private Vector3 GetFromVector(Vector3 currentFrom)
+		{
 			float x = useCurrentX ? currentFrom.x + offsetFromCurrent.Value.x : fromVector.Value.x;
 			float y = useCurrentY ? currentFrom.y + offsetFromCurrent.Value.y : fromVector.Value.y;
 			float z = useCurrentZ ? currentFrom.z + offsetFromCurrent.Value.z : fromVector.Value.z;

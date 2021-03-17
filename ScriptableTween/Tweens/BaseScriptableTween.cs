@@ -7,11 +7,12 @@ using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
-using Random = System.Random;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
+{
 	[EditorIcon("atom-icon-purple")]
-	public abstract class BaseScriptableTween<T> : AtomAction<T> {
+	public abstract class BaseScriptableTween<T> : AtomAction<T>
+	{
 		[Title("Tween")]
 		[SerializeField]
 		protected Ease[] possibleEaseTypes;
@@ -19,26 +20,26 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected T fixedTarget;
-		
+
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		private FloatReference duration;
 
 		[SerializeField]
 		private bool randomizeDuration;
-		
-		[Range(0,1)]
+
+		[Range(0, 1)]
 		[SerializeField]
 		private float durationRandomization;
 
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		private FloatReference delay;
-		
+
 		[SerializeField]
 		private bool randomizeDelay;
-		
-		[Range(0,1)]
+
+		[Range(0, 1)]
 		[SerializeField]
 		private float delayRandomization;
 
@@ -57,7 +58,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
 		private bool autoKill = true;
-		
+
 		[TabGroup("From To", "To")]
 		[SerializeField]
 		private bool isRelative;
@@ -65,27 +66,31 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 		private Ease CurrentEaseType => possibleEaseTypes.RandomElement();
 
 		protected float CurrentDuration => GetNewValueFor(duration.Value, durationRandomization, randomizeDuration);
-		protected  float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
+		protected float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
 
+		public abstract IEnumerable<Tween> GetTweens(T target);
 
-		protected abstract IEnumerable<Tween> GetTweens(T target);
-
-		public override void Do() {
+		public override void Do()
+		{
 			Do(fixedTarget);
 		}
 
-		public override async void Do(T target) {
+		public override async void Do(T target)
+		{
 			await DoAsync(target);
 		}
 
-		public async UniTask DoAsync() {
+		public async UniTask DoAsync()
+		{
 			await DoAsync(fixedTarget);
 		}
 
-		public virtual async UniTask DoAsync(T target) {
+		public virtual async UniTask DoAsync(T target)
+		{
 			Tween[] tweens = GetTweens(target).ToArray();
 
-			foreach (Tween tween in tweens) {
+			foreach (Tween tween in tweens)
+			{
 				ApplyDefaultOptions(tween, target);
 			}
 
@@ -94,7 +99,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 			await UniTask.WhenAll(tweenTasks);
 		}
 
-		protected virtual Tween ApplyDefaultOptions(Tween tween, T target) {
+		protected virtual Tween ApplyDefaultOptions(Tween tween, T target)
+		{
 			return tween
 				.SetLoops(loops, loopType)
 				.SetAutoKill(autoKill)
@@ -104,8 +110,10 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens {
 				.SetRelative(isRelative);
 		}
 
-		private float GetNewValueFor(float value, float randomization, bool randomize) {	
-			if (randomize) {
+		private float GetNewValueFor(float value, float randomization, bool randomize)
+		{
+			if (randomize)
+			{
 				return value.Randomize(randomization);
 			}
 

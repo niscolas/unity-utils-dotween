@@ -4,23 +4,29 @@ using Plugins.DOTweenUtils.ScriptableTween.Tweens;
 using UnityAtoms;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Sequences {
-	public abstract class BaseScriptableTweenSequence<T> : AtomAction<T> {
+namespace Plugins.DOTweenUtils.ScriptableTween.Sequences
+{
+	public abstract class BaseScriptableTweenSequence<T> : AtomAction<T>
+	{
 		[SerializeField]
 		protected BaseScriptableTween<T>[] content;
 
-		public sealed override async void Do(T target) {
+		public sealed override async void Do(T target)
+		{
 			await DoAsync(target);
 		}
 
-		public async UniTask DoAsync(T target) {
-			if (target == null) {
+		public async UniTask DoAsync(T target)
+		{
+			if (target == null)
+			{
 				return;
 			}
 
 			List<UniTask> tweenTasks = new List<UniTask>();
 
-			foreach (BaseScriptableTween<T> scriptableTween in content) {
+			foreach (BaseScriptableTween<T> scriptableTween in content)
+			{
 				tweenTasks.Add(
 					scriptableTween.DoAsync(target)
 				);
@@ -29,7 +35,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Sequences {
 			await UniTask.WhenAll(tweenTasks);
 		}
 
-		public IEnumerator<BaseScriptableTween<T>> GetEnumerator() {
+		public IEnumerator<BaseScriptableTween<T>> GetEnumerator()
+		{
 			return ((IEnumerable<BaseScriptableTween<T>>) content).GetEnumerator();
 		}
 	}

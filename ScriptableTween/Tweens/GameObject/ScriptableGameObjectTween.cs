@@ -6,8 +6,10 @@ using UnityAtoms.BaseAtoms;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
-	public abstract class GameObjectScriptableTween : BaseScriptableTween<UnityEngine.GameObject> {
+namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
+{
+	public abstract class ScriptableGameObjectTween : BaseScriptableTween<UnityEngine.GameObject>
+	{
 		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
 		private LinkBehaviour linkBehaviour = LinkBehaviour.CompleteAndKillOnDisable;
@@ -27,27 +29,34 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject {
 		[SerializeField]
 		private BoolReference destroyTargetOnFinish;
 
-		public override async UniTask DoAsync(UnityEngine.GameObject target) {
-			if (enableTargetOnStart) {
+		public override async UniTask DoAsync(UnityEngine.GameObject target)
+		{
+			if (enableTargetOnStart)
+			{
 				target.SetActive(true);
 			}
 
 			await base.DoAsync(target);
 
-			if (destroyTargetOnFinish) {
+			if (destroyTargetOnFinish)
+			{
 				Destroy(target);
 			}
-			else if (disableTargetOnFinish) {
-				if (LeanPool.Links.ContainsKey(target)) {
+			else if (disableTargetOnFinish)
+			{
+				if (LeanPool.Links.ContainsKey(target))
+				{
 					LeanPool.Despawn(target);
 				}
-				else {
+				else
+				{
 					target.SetActive(false);
 				}
 			}
 		}
 
-		protected override Tween ApplyDefaultOptions(Tween tween, UnityEngine.GameObject target) {
+		protected override Tween ApplyDefaultOptions(Tween tween, UnityEngine.GameObject target)
+		{
 			return base
 				.ApplyDefaultOptions(tween, target)
 				.SetLink(target, linkBehaviour);
