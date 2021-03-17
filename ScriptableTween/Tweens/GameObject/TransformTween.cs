@@ -18,51 +18,51 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		[SerializeField]
 		private TransformOperation operation;
 
-		[TabGroup("From To", "From")]
-		[BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
 		[HorizontalGroup("From To/From/Current From/XYZ", LabelWidth = 10)]
 		[VerticalGroup("From To/From/Current From/XYZ/X")]
 		[LabelText("X")]
 		[SerializeField]
 		private bool useCurrentX;
 
-		[TabGroup("From To", "From")]
-		[BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Y")]
 		[LabelText("Y")]
 		[SerializeField]
 		private bool useCurrentY;
 
-		[TabGroup("From To", "From")]
-		[BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Z")]
 		[LabelText("Z")]
 		[SerializeField]
 		private bool useCurrentZ;
 
-		[TabGroup("From To", "From")]
-		[BoxGroup("From To/From/Current From")]
-		[LabelText("With Offset")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
 		[ShowIf(nameof(UseCurrentXYZ))]
-		[Title("Offset From Current")]
+		[Title("", "Offset")]
 		[HideLabel]
 		[SerializeField]
 		private Vector3Reference offsetFromCurrent;
 
-		[TabGroup("From To", "From")]
-		[BoxGroup("From To/From/Fixed From")]
+		[TabGroup("From To", "From"), BoxGroup("From To/From/Fixed From")]
 		[DisableIf(nameof(UseCurrentXYZ))]
 		[HideLabel]
 		[SerializeField]
 		private Vector3Reference fromVector;
 
 		[TabGroup("From To", "To")]
+		[HideLabel]
 		[SerializeField]
 		private Vector3Reference toVector;
 
+		[TabGroup("From To", "To")]
+		[LabelText("Randomize")]
 		[SerializeField]
 		private bool randomizeTo;
 
+		[TabGroup("From To", "To")]
+		[ShowIf(nameof(randomizeTo))]
+		[LabelText("Randomization")]
 		[SerializeField]
 		private Vector3 toVectorRandomization;
 

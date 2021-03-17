@@ -14,35 +14,10 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 	public abstract class BaseScriptableTween<T> : AtomAction<T>
 	{
 		[Title("Tween")]
-		[SerializeField]
-		protected Ease[] possibleEaseTypes;
-
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected T fixedTarget;
-
-		[TabGroup("Main Settings", "Basic")]
-		[SerializeField]
-		private FloatReference duration;
-
-		[SerializeField]
-		private bool randomizeDuration;
-
-		[Range(0, 1)]
-		[SerializeField]
-		private float durationRandomization;
-
-		[TabGroup("Main Settings", "Basic")]
-		[SerializeField]
-		private FloatReference delay;
-
-		[SerializeField]
-		private bool randomizeDelay;
-
-		[Range(0, 1)]
-		[SerializeField]
-		private float delayRandomization;
-
+		
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected IntReference loops;
@@ -54,6 +29,38 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected BoolReference useUnscaledTime;
+		
+		[TabGroup("Main Settings", "Basic")]
+		[SerializeField]
+		protected Ease[] possibleEaseTypes;
+
+		[TabGroup("Main Settings", "Duration")]
+		[SerializeField]
+		private FloatReference duration;
+
+		[TabGroup("Main Settings", "Duration")]
+		[SerializeField]
+		private bool randomizeDuration;
+
+		[TabGroup("Main Settings", "Duration")]
+		[ShowIf(nameof(randomizeDuration))]
+		[Range(0, 1)]
+		[SerializeField]
+		private float durationRandomization;
+
+		[TabGroup("Main Settings", "Delay")]
+		[SerializeField]
+		private FloatReference delay;
+
+		[TabGroup("Main Settings", "Delay")]
+		[SerializeField]
+		private bool randomizeDelay;
+
+		[TabGroup("Main Settings", "Delay")]
+		[ShowIf(nameof(randomizeDelay))]
+		[Range(0, 1)]
+		[SerializeField]
+		private float delayRandomization;
 
 		[TabGroup("Main Settings", "Life Time")]
 		[SerializeField]
@@ -105,7 +112,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 				.SetLoops(loops, loopType)
 				.SetAutoKill(autoKill)
 				.SetDelay(CurrentDelay)
-				.SetEase(possibleEaseTypes.RandomElement())
+				.SetEase(CurrentEaseType)
 				.SetUpdate(useUnscaledTime)
 				.SetRelative(isRelative);
 		}
