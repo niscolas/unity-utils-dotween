@@ -9,13 +9,15 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Utils
 		protected BaseScriptableTweenSequence<T> entryTweenSequence;
 
 		[SerializeField]
-		private T target;
+		protected T target;
 
 		[SerializeField]
 		private bool executeOnAwake;
 
 		[SerializeField]
 		private bool executeOnEnable;
+
+		protected virtual T Target => target;
 
 		private void Awake()
 		{
@@ -35,7 +37,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Utils
 
 		private async void PlayEntryTween()
 		{
-			await entryTweenSequence.DoAsync(target);
+			await entryTweenSequence.DoAsync(Target);
 		}
 	}
 }

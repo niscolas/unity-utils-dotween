@@ -17,7 +17,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected T fixedTarget;
-		
+
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected IntReference loops;
@@ -29,7 +29,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected BoolReference useUnscaledTime;
-		
+
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		protected Ease[] possibleEaseTypes;
@@ -70,7 +70,18 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 		[SerializeField]
 		private bool isRelative;
 
-		private Ease CurrentEaseType => possibleEaseTypes.RandomElement();
+		private Ease CurrentEaseType
+		{
+			get
+			{
+				if (!possibleEaseTypes.IsNullOrEmpty())
+				{
+					return possibleEaseTypes.RandomElement();
+				}
+
+				return default;
+			}
+		}
 
 		protected float CurrentDuration => GetNewValueFor(duration.Value, durationRandomization, randomizeDuration);
 		protected float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);

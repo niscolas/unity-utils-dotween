@@ -66,7 +66,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		[SerializeField]
 		private Vector3 toVectorRandomization;
 
-		private Vector3 CurrentToVector
+		private Vector3 ToVector
 		{
 			get
 			{
@@ -123,7 +123,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		{
 			target.transform.position = GetFromPosition(target);
 
-			Tween translationTween = target.transform.DOMove(CurrentToVector, CurrentDuration);
+			Tween translationTween = target.transform.DOMove(ToVector, CurrentDuration);
 
 			return translationTween;
 		}
@@ -132,7 +132,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		{
 			target.transform.rotation = Quaternion.Euler(GetFromRotation(target));
 
-			Tween rotationTween = target.transform.DORotate(CurrentToVector, CurrentDuration);
+			Tween rotationTween = target.transform.DORotate(ToVector, CurrentDuration);
 
 			return rotationTween;
 		}
@@ -141,7 +141,7 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		{
 			target.transform.localScale = GetFromScale(target);
 
-			Tween scalingTween = target.transform.DOScale(CurrentToVector, CurrentDuration);
+			Tween scalingTween = target.transform.DOScale(ToVector, CurrentDuration);
 
 			return scalingTween;
 		}

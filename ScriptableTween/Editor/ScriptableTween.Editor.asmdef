@@ -1,0 +1,19 @@
+{
+    "name": "ScriptableTween.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2b50532acb38a8e4e865282e0eaeface",
+        "GUID:14165214884ae4a619bfb290f28194a7"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
