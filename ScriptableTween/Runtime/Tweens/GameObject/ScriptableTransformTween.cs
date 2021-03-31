@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
-using Plugins.ClassExtensions.CsharpExtensions;
+using Plugins.ScriptableTween.Utilities;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
+namespace Plugins.ScriptableTween.Tweens.GameObject
 {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(

@@ -1,4 +1,4 @@
-﻿namespace Plugins.DOTweenUtils.ScriptableTween
+﻿namespace Plugins.ScriptableTween
 {
 	public static class Constants
 	{

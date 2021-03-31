@@ -4,7 +4,7 @@ using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
+namespace Plugins.ScriptableTween.Tweens.GameObject
 {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(

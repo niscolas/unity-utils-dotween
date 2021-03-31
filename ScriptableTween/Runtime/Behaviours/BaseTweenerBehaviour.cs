@@ -1,7 +1,7 @@
-﻿using Plugins.DOTweenUtils.ScriptableTween.Sequences;
+﻿using Plugins.ScriptableTween.Sequences;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Utils
+namespace Plugins.ScriptableTween.Behaviours
 {
 	public class BaseTweenerBehaviour<T> : MonoBehaviour
 	{

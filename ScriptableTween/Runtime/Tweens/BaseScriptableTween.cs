@@ -2,13 +2,13 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Plugins.ClassExtensions.CsharpExtensions;
+using Plugins.ScriptableTween.Utilities;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
+namespace Plugins.ScriptableTween.Tweens
 {
 	[EditorIcon("atom-icon-purple")]
 	public abstract class BaseScriptableTween<T> : AtomAction<T>

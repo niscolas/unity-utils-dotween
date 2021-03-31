@@ -1,13 +1,16 @@
 {
-    "name": "ScriptableTween.Editor",
+    "name": "ScriptableTween",
     "rootNamespace": "",
     "references": [
+        "GUID:29492541a59d04a81b47a7f225e8a22d",
         "GUID:14165214884ae4a619bfb290f28194a7",
-        "GUID:813202cc67f0245409164cbc97726c07"
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:029c1c1b674aaae47a6841a0b89ad80e",
+        "GUID:b0b6a5841fa01304596d18bd9c448343",
+        "",
+        "GUID:174bc9f391f1b7f4292b3824c5019a21"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

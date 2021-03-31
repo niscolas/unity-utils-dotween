@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Utils
+namespace Plugins.ScriptableTween.Behaviours
 {
 	public class MaterialTweenerBehaviour : BaseTweenerBehaviour<Material> { }
 }

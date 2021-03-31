@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using DG.DOTweenEditor;
 using DG.Tweening;
-using Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject;
+using Plugins.ScriptableTween.Tweens.GameObject;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Editor
+namespace Plugins.ScriptableTween.Editor
 {
 	public class TweenPreviewer : OdinEditorWindow
 	{

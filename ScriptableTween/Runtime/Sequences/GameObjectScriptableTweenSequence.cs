@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Plugins.DOTweenUtils.ScriptableTween.Sequences
+namespace Plugins.ScriptableTween.Sequences
 {
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "(GameObject) => Scriptable Tween Sequence",
