@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 {
@@ -12,11 +13,11 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "Scriptable Transform Tween",
 		order = Constants.AssetMenuOrder)]
-	public class TransformTween : ScriptableGameObjectTween
+	public class ScriptableTransformTween : ScriptableGameObjectTween
 	{
 		[Title("Transform Tween")]
-		[SerializeField]
-		private TransformOperation operation;
+		[FormerlySerializedAs("operation"), SerializeField]
+		private TransformTweenType _tweenType;
 
 		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
 		[HorizontalGroup("From To/From/Current From/XYZ", LabelWidth = 10)]
@@ -87,9 +88,9 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 
 		private bool UseCurrentXYZ => useCurrentX && useCurrentY && useCurrentZ;
 
-		public TransformTween WithDynamicTo(Vector3 to)
+		public ScriptableTransformTween WithDynamicTo(Vector3 to)
 		{
-			TransformTween dynamicToVectorTween = Instantiate(this);
+			ScriptableTransformTween dynamicToVectorTween = Instantiate(this);
 			dynamicToVectorTween.toVector.Value = to;
 			return dynamicToVectorTween;
 		}
@@ -97,17 +98,17 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens.GameObject
 		public override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target)
 		{
 			Tween transformTween;
-			switch (operation)
+			switch (_tweenType)
 			{
-				case TransformOperation.Position:
+				case TransformTweenType.Position:
 					transformTween = PerformTranslation(target);
 					break;
 
-				case TransformOperation.Rotation:
+				case TransformTweenType.Rotation:
 					transformTween = PerformRotation(target);
 					break;
 
-				case TransformOperation.Scale:
+				case TransformTweenType.Scale:
 					transformTween = PerformScaling(target);
 					break;
 

@@ -1,6 +1,6 @@
 namespace Plugins.DOTweenUtils.ScriptableTween
 {
-	public enum TransformOperation
+	public enum TransformTweenType
 	{
 		Position,
 		Rotation,

@@ -84,7 +84,8 @@ namespace Plugins.DOTweenUtils.ScriptableTween.Tweens
 		}
 
 		protected float CurrentDuration => GetNewValueFor(duration.Value, durationRandomization, randomizeDuration);
-		protected float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
+		
+		private float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
 
 		public abstract IEnumerable<Tween> GetTweens(T target);
 
