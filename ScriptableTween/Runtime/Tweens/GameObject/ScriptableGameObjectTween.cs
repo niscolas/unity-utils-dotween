@@ -6,7 +6,7 @@ using UnityAtoms.BaseAtoms;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Plugins.ScriptableTween.Tweens.GameObject
+namespace ScriptableTween.Tweens.GameObject
 {
 	public abstract class ScriptableGameObjectTween : BaseScriptableTween<UnityEngine.GameObject>
 	{

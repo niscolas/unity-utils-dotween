@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
-using Plugins.ScriptableTween.Utilities;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityExtensions;
 
-namespace Plugins.ScriptableTween.Tweens.GameObject
+namespace ScriptableTween.Tweens.GameObject
 {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
@@ -16,36 +16,42 @@ namespace Plugins.ScriptableTween.Tweens.GameObject
 	public class ScriptableTransformTween : ScriptableGameObjectTween
 	{
 		[Title("Transform Tween")]
-		[FormerlySerializedAs("operation"), SerializeField]
+		[FormerlySerializedAs("operation")]
+		[SerializeField]
 		private TransformTweenType _tweenType;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[HorizontalGroup("From To/From/Current From/XYZ", LabelWidth = 10)]
 		[VerticalGroup("From To/From/Current From/XYZ/X")]
 		[LabelText("X")]
 		[SerializeField]
 		private bool useCurrentX;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Y")]
 		[LabelText("Y")]
 		[SerializeField]
 		private bool useCurrentY;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[VerticalGroup("From To/From/Current From/XYZ/Z")]
 		[LabelText("Z")]
 		[SerializeField]
 		private bool useCurrentZ;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Current From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Current From")]
 		[ShowIf(nameof(UseCurrentXYZ))]
 		[Title("", "Offset")]
 		[HideLabel]
 		[SerializeField]
 		private Vector3Reference offsetFromCurrent;
 
-		[TabGroup("From To", "From"), BoxGroup("From To/From/Fixed From")]
+		[TabGroup("From To", "From")]
+		[BoxGroup("From To/From/Fixed From")]
 		[DisableIf(nameof(UseCurrentXYZ))]
 		[HideLabel]
 		[SerializeField]

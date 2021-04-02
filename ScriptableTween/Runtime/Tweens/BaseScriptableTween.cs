@@ -2,13 +2,13 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using Plugins.ScriptableTween.Utilities;
 using Sirenix.OdinInspector;
 using UnityAtoms;
 using UnityAtoms.BaseAtoms;
 using UnityEngine;
+using UnityExtensions;
 
-namespace Plugins.ScriptableTween.Tweens
+namespace ScriptableTween.Tweens
 {
 	[EditorIcon("atom-icon-purple")]
 	public abstract class BaseScriptableTween<T> : AtomAction<T>
@@ -30,13 +30,23 @@ namespace Plugins.ScriptableTween.Tweens
 		[SerializeField]
 		protected BoolReference useUnscaledTime;
 
-		[TabGroup("Main Settings", "Basic")]
+		[TabGroup("Main Settings", "Appearance")]
+		[SerializeField]
+		private bool _useAnimationCurve;
+
+		[TabGroup("Main Settings", "Appearance")]
+		[HideIf(nameof(_useAnimationCurve))]
 		[SerializeField]
 		protected Ease[] possibleEaseTypes;
 
+		[TabGroup("Main Settings", "Appearance")]
+		[ShowIf(nameof(_useAnimationCurve))]
+		[SerializeField]
+		private AnimationCurve _curve;
+
 		[TabGroup("Main Settings", "Duration")]
 		[SerializeField]
-		private FloatReference duration;
+		private FloatReference duration = new FloatReference(0.1f);
 
 		[TabGroup("Main Settings", "Duration")]
 		[SerializeField]
@@ -84,7 +94,7 @@ namespace Plugins.ScriptableTween.Tweens
 		}
 
 		protected float CurrentDuration => GetNewValueFor(duration.Value, durationRandomization, randomizeDuration);
-		
+
 		private float CurrentDelay => GetNewValueFor(delay.Value, delayRandomization, randomizeDelay);
 
 		public abstract IEnumerable<Tween> GetTweens(T target);
@@ -107,6 +117,11 @@ namespace Plugins.ScriptableTween.Tweens
 		public virtual async UniTask DoAsync(T target)
 		{
 			Tween[] tweens = GetTweens(target).ToArray();
+			if (tweens.HasNullElements())
+			{
+				Debug.LogWarning($"Tween created from {name} is not valid.");
+				return;
+			}
 
 			foreach (Tween tween in tweens)
 			{
@@ -120,13 +135,22 @@ namespace Plugins.ScriptableTween.Tweens
 
 		protected virtual Tween ApplyDefaultOptions(Tween tween, T target)
 		{
-			return tween
-				.SetLoops(loops, loopType)
+			tween = tween.SetLoops(loops, loopType)
 				.SetAutoKill(autoKill)
 				.SetDelay(CurrentDelay)
-				.SetEase(CurrentEaseType)
 				.SetUpdate(useUnscaledTime)
 				.SetRelative(isRelative);
+
+			if (_useAnimationCurve)
+			{
+				tween = tween.SetEase(_curve);
+			}
+			else
+			{
+				tween = tween.SetEase(CurrentEaseType);
+			}
+
+			return tween;
 		}
 
 		private float GetNewValueFor(float value, float randomization, bool randomize)

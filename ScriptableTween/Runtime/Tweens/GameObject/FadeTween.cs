@@ -6,7 +6,7 @@ using UnityAtoms;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Plugins.ScriptableTween.Tweens.GameObject
+namespace ScriptableTween.Tweens.GameObject
 {
 	[EditorIcon("atom-icon-purple")]
 	[CreateAssetMenu(
@@ -14,29 +14,41 @@ namespace Plugins.ScriptableTween.Tweens.GameObject
 		order = Constants.AssetMenuOrder)]
 	public class FadeTween : ScriptableGameObjectTween
 	{
-		[Header("Fade Settings")]
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		private bool recursive = true;
 
+		[TabGroup("From To", "From")]
 		[SerializeField]
 		private bool useCurrentAlpha;
 
+		[TabGroup("From To", "From")]
 		[HideIf(nameof(useCurrentAlpha))]
+		[LabelText("From")]
 		[SerializeField]
 		private float fadeFrom;
 
+		[TabGroup("From To", "To")]
+		[LabelText("To")]
 		[SerializeField]
 		private float fadeTo;
 
-		[Header("Fade Settings / Targets")]
+		[TabGroup("Main Settings", "Basic")]
+		[Title("", "Targets")]
 		[SerializeField]
 		private bool affectGraphics = true;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		private bool affectRenderers = true;
 
+		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
 		private bool affectSpriteRenderers = true;
+
+		[TabGroup("Main Settings", "Basic")]
+		[SerializeField]
+		private bool _affectCanvasGroups = true;
 
 		public override IEnumerable<Tween> GetTweens(UnityEngine.GameObject target)
 		{
@@ -54,6 +66,11 @@ namespace Plugins.ScriptableTween.Tweens.GameObject
 			if (affectSpriteRenderers)
 			{
 				tweens.AddRange(GetTweens<SpriteRenderer>(target, GetSpriteRenderersFadeTweens));
+			}
+
+			if (_affectCanvasGroups)
+			{
+				tweens.AddRange(GetTweens<CanvasGroup>(target, GetCanvasGroupsFadeTweens));
 			}
 
 			return tweens;
@@ -113,6 +130,13 @@ namespace Plugins.ScriptableTween.Tweens.GameObject
 			return spriteRenderer
 				.DOFade(fadeTo, CurrentDuration)
 				.From(useCurrentAlpha ? spriteRenderer.color.a : fadeFrom);
+		}
+
+		private Tween GetCanvasGroupsFadeTweens(CanvasGroup canvasGroup)
+		{
+			return canvasGroup
+				.DOFade(fadeTo, CurrentDuration)
+				.From(useCurrentAlpha ? canvasGroup.alpha : fadeFrom);
 		}
 	}
 }

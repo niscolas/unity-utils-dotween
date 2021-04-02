@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Plugins.ScriptableTween.Tweens;
+using ScriptableTween.Tweens;
 using UnityAtoms;
 using UnityEngine;
 
-namespace Plugins.ScriptableTween.Sequences
+namespace ScriptableTween.Sequences
 {
 	public abstract class BaseScriptableTweenSequence<T> : AtomAction<T>
 	{

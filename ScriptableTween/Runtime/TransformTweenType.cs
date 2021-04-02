@@ -1,4 +1,4 @@
-namespace Plugins.ScriptableTween
+namespace ScriptableTween
 {
 	public enum TransformTweenType
 	{
