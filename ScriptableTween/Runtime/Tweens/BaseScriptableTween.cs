@@ -116,16 +116,19 @@ namespace ScriptableTween.Tweens
 
 		public virtual async UniTask DoAsync(T target)
 		{
-			Tween[] tweens = GetTweens(target).ToArray();
-			if (tweens.HasNullElements())
-			{
-				Debug.LogWarning($"Tween created from {name} is not valid.");
-				return;
-			}
+			IList<Tween> tweens = GetTweens(target).ToList();
+			
+			if (tweens.IsNullOrEmpty()) return;
 
-			foreach (Tween tween in tweens)
+			for (int i = 0; i < tweens.Count; i++)
 			{
-				ApplyDefaultOptions(tween, target);
+				if (tweens[i] == null)
+				{
+					tweens.RemoveAt(i);
+					continue;
+				}
+
+				ApplyDefaultOptions(tweens[i], target);
 			}
 
 			IEnumerable<UniTask> tweenTasks = tweens.Select(tween => tween.AsyncWaitForCompletion().AsUniTask());

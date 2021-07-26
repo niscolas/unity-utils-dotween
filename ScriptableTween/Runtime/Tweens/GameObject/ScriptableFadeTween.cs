@@ -12,7 +12,7 @@ namespace ScriptableTween.Tweens.GameObject
 	[CreateAssetMenu(
 		menuName = Constants.BaseAssetMenuPath + "Scriptable Fade Tween",
 		order = Constants.AssetMenuOrder)]
-	public class FadeTween : ScriptableGameObjectTween
+	public class ScriptableFadeTween : ScriptableGameObjectTween
 	{
 		[TabGroup("Main Settings", "Basic")]
 		[SerializeField]
@@ -76,7 +76,7 @@ namespace ScriptableTween.Tweens.GameObject
 			return tweens;
 		}
 
-		private IEnumerable<Tween> GetTweens<T>(UnityEngine.GameObject target, Func<T, Tween> tweenFunc)
+		private IEnumerable<Tween> GetTweens<T>(UnityEngine.GameObject target, Func<T, Tween> tweenProvider)
 		{
 			List<Tween> tweens = new List<Tween>();
 			if (!recursive)
@@ -84,7 +84,7 @@ namespace ScriptableTween.Tweens.GameObject
 				T component = target.GetComponent<T>();
 				if (component != null)
 				{
-					tweens.Add(tweenFunc?.Invoke(component));
+					tweens.Add(tweenProvider?.Invoke(component));
 				}
 
 				return tweens;
@@ -99,12 +99,9 @@ namespace ScriptableTween.Tweens.GameObject
 
 			foreach (T component in components)
 			{
-				if (component == null)
-				{
-					continue;
-				}
+				if (component == null) continue;
 
-				Tween tween = tweenFunc?.Invoke(component);
+				Tween tween = tweenProvider?.Invoke(component);
 				tweens.Add(tween);
 			}
 
