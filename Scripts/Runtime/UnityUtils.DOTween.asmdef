@@ -1,13 +1,12 @@
 {
-    "name": "ScriptableTween.Editor",
+    "name": "UnityUtils.DOTween",
     "rootNamespace": "",
     "references": [
-        "GUID:14165214884ae4a619bfb290f28194a7",
-        "GUID:813202cc67f0245409164cbc97726c07"
+        "UnityAtoms.UnityAtomsBaseAtoms.Runtime",
+        "UnityAtoms.UnityAtomsCore.Runtime",
+        "UnityUtils.Core"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
