@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace niscolas.UnityUtils.Extras
 {
-    public class DOTweenSimpleMove : BaseDOTweenTransformOperation<Vector3, Vector3, VectorOptions>
+    public class DOTweenSimpleMove : BaseDOTweenTransformOperationMB<Vector3, Vector3, VectorOptions>
     {
         [FoldoutGroup("From")]
         [EnableIf(nameof(_setFrom))]

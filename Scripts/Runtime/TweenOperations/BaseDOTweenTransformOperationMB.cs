@@ -6,8 +6,8 @@ using UnityEngine.Serialization;
 
 namespace niscolas.UnityUtils.Extras
 {
-    public abstract class BaseDOTweenTransformOperation<TFrom, TTo, TOptions> :
-        BaseDOTweenOperation<TFrom, TTo, TOptions> where TOptions : struct, IPlugOptions
+    public abstract class BaseDOTweenTransformOperationMB<TFrom, TTo, TOptions> :
+        BaseDOTweenOperationMB<TFrom, TTo, TOptions> where TOptions : struct, IPlugOptions
     {
         [FoldoutGroup("General Settings")]
         [SerializeField]

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace niscolas.UnityUtils.Extras
 {
-    public class DOTweenScale : BaseDOTweenTransformOperation<Vector3, Vector3, VectorOptions>
+    public class DOTweenScaleMB : BaseDOTweenTransformOperationMB<Vector3, Vector3, VectorOptions>
     {
         protected override void AfterSetDefaultOptions(TweenerCore<Vector3, Vector3, VectorOptions> tweener)
         {

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace niscolas.UnityUtils.Extras
 {
-    public class DOTweenFloat : BaseDOTweenOperation<float, float, FloatOptions>
+    public class DOTweenFloatMB : BaseDOTweenOperationMB<float, float, FloatOptions>
     {
         [FoldoutGroup("Tween Settings")]
         [SerializeField]

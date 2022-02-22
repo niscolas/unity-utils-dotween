@@ -7,12 +7,10 @@ using UnityAtoms.BaseAtoms;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
-using UnityUtils;
 
 namespace niscolas.UnityUtils.Extras
 {
-    // TODO move this logic to new ScriptableTween
-    public abstract class BaseDOTweenOperation<TFrom, TTo, TOptions> : CachedMonoBehaviour
+    public abstract class BaseDOTweenOperationMB<TFrom, TTo, TOptions> : CachedMB
         where TOptions : struct, IPlugOptions
     {
         [FoldoutGroup("General Settings")]
@@ -22,7 +20,7 @@ namespace niscolas.UnityUtils.Extras
         [FoldoutGroup("General Settings")]
         [ShowIf(nameof(_autoStart))]
         [SerializeField]
-        private MonoCallbackType _autoStartMoment;
+        private MonoBehaviourEventType _autoStartMoment;
 
         [FoldoutGroup("To")]
         [FormerlySerializedAs("_endPositionIsRelative"), SerializeField]
@@ -118,7 +116,7 @@ namespace niscolas.UnityUtils.Extras
 
             if (_autoStart)
             {
-                MonoLifecycleHooksManager.AutoTrigger(_gameObject, DoTween, _autoStartMoment);
+                MonoHooksManagerMB.AutoTrigger(_gameObject, DoTween, _autoStartMoment);
             }
         }
 

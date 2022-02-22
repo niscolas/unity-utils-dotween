@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace niscolas.UnityUtils.Extras
 {
-    public class DOTweenSimpleRotation : BaseDOTweenTransformOperation<Quaternion, Vector3, QuaternionOptions>
+    public class DOTweenSimpleRotation : BaseDOTweenTransformOperationMB<Quaternion, Vector3, QuaternionOptions>
     {
         [FoldoutGroup("Tween Settings")]
         [SerializeField]
