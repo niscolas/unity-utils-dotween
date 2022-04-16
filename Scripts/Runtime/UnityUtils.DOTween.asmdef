@@ -4,7 +4,9 @@
     "references": [
         "UnityAtoms.UnityAtomsBaseAtoms.Runtime",
         "UnityAtoms.UnityAtomsCore.Runtime",
-        "UnityUtils.Core"
+        "UnityUtils.Core",
+        "UnityEditor.UI",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

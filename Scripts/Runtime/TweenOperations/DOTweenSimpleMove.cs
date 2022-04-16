@@ -1,7 +1,11 @@
 ﻿using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#elif NAUGHTY_ATTRIBUTES
+using NaughtyAttributes;
+#endif
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,20 +13,27 @@ namespace niscolas.UnityUtils.Extras
 {
     public class DOTweenSimpleMove : BaseDOTweenTransformOperationMB<Vector3, Vector3, VectorOptions>
     {
+#if ODIN_INSPECTOR
         [FoldoutGroup("From")]
+#endif
+#if ODIN_INSPECTOR || NAUGHTY_ATTRIBUTES
         [EnableIf(nameof(_setFrom))]
+#endif
         [FormerlySerializedAs("_fromPoint"), FormerlySerializedAs("_startPoint")]
         [SerializeField]
         private Transform _fromReferencePoint;
 
+#if ODIN_INSPECTOR
         [FoldoutGroup("To")]
+#endif
         [FormerlySerializedAs("_endPoint"), SerializeField]
         private Transform _toReferencePoint;
-        
+
+#if ODIN_INSPECTOR
         [FoldoutGroup("Tween Settings")]
+#endif
         [SerializeField]
         protected bool _isLocal;
-
 
         protected override TweenerCore<Vector3, Vector3, VectorOptions> GetTweener()
         {

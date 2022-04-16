@@ -1,14 +1,17 @@
-# :curly_loop: UnityUtils.DOTween
-> :bulb: A simple collection of utility scripts related to [:curly_loop: DOTween](http://dotween.demigiant.com/)
+# ➿ UnityUtils.DOTween
+> 💡 A simple collection of utility scripts related to [➿ DOTween](http://dotween.demigiant.com/)
 
-## :nut_and_bolt: Installation
-1. Clone :arrow_down: this repo inside your Unity project;
-2. Install the dependencies :point_down:
+## 🔩 Installation
+1. Install the dependencies 👇
+2. Clone ⬇ this repo inside your Unity project;
 
-## :chains: Dependencies
-- [:curly_loop: DOTween](http://dotween.demigiant.com/)
-- [:hammer: Odin Inspector Attributes DLL or Stub File](https://discord.com/channels/355444042009673728/355817720182341632/898236644270964787)
-- [:atom_symbol: UnityAtoms](https://github.com/unity-atoms/unity-atoms)
+## ⛓ Dependencies
+- [➿ DOTween](http://dotween.demigiant.com/)
+- [⚛ UnityAtoms](https://github.com/unity-atoms/unity-atoms)
     - Base Atoms
     - Core
-- [:zap: UnityUtils.Core](https://github.com/niscolas/unity-utils-core)
+- [⚡ UnityUtils.Core](https://github.com/niscolas/unity-utils-core)
+
+## ⛓ Optional Dependencies
+- [Naughty Attributes](https://github.com/dbrizov/NaughtyAttributes)
+- [Odin Inspector](https://odininspector.com/)

@@ -1,18 +1,24 @@
 ﻿using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+#if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
+#endif
 using UnityEngine;
 
 namespace niscolas.UnityUtils.Extras
 {
     public class DOTweenSimpleRotation : BaseDOTweenTransformOperationMB<Quaternion, Vector3, QuaternionOptions>
     {
+#if ODIN_INSPECTOR
         [FoldoutGroup("Tween Settings")]
+#endif
         [SerializeField]
         private RotateMode _rotateMode = RotateMode.Fast;
 
+#if ODIN_INSPECTOR
         [FoldoutGroup("Tween Settings")]
+#endif
         [SerializeField]
         protected bool _isLocal;
 
