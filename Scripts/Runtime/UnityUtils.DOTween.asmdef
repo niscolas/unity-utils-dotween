@@ -5,8 +5,7 @@
         "UnityAtoms.UnityAtomsBaseAtoms.Runtime",
         "UnityAtoms.UnityAtomsCore.Runtime",
         "UnityUtils.Core",
-        "UnityEditor.UI",
-        "UnityEngine.UI"
+        "NaughtyAttributes.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
