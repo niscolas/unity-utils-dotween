@@ -27,6 +27,12 @@ namespace niscolas.UnityUtils.Extras
 #if ODIN_INSPECTOR
         [FoldoutGroup("General Settings")]
 #endif
+        [SerializeField]
+        private bool _restartBeforePlaying;
+
+#if ODIN_INSPECTOR
+        [FoldoutGroup("General Settings")]
+#endif
 #if ODIN_INSPECTOR || NAUGHTY_ATTRIBUTES
         [ShowIf(nameof(_autoStart))]
 #endif
@@ -186,7 +192,11 @@ namespace niscolas.UnityUtils.Extras
 #endif
         public void DoTween()
         {
-            if (_isPlaying && !_canReplayWhileIncomplete)
+            if (_restartBeforePlaying)
+            {
+                GetLinkTarget().transform.DOKill();
+            }
+            else if (_isPlaying && !_canReplayWhileIncomplete)
             {
                 return;
             }
